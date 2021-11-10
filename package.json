@@ -1,0 +1,27 @@
+{
+  "name": "defi-stake-yield",
+  "version": "1.0.0",
+  "description": "## Users Should be Able to:",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naiyoma/Token_Farm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/naiyoma/Token_Farm/issues"
+  },
+  "homepage": "https://github.com/naiyoma/Token_Farm#readme"
+}
