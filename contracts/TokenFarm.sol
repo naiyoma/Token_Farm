@@ -9,7 +9,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 contract TokenFarm is Ownable{
 
     mapping(address => mapping(address =>uint256)) public stakingBalance;
-    mapping(address => uint256) public uniqueTokenStaked;
+    mapping(address => uint256) public uniqueTokensStaked;
     mapping(address => address) public tokenPriceFeedMapping;
     address[] public stakers;
     address[] public allowedTokens;
@@ -33,46 +33,47 @@ contract TokenFarm is Ownable{
             stakersIndex++
         ){
             address recipient = stakers[stakersIndex];
-            uint256 userTotalValue = getUserTotalValue(recipient)
+            uint256 userTotalValue = getUserTotalValue(recipient);
             dappToken.transfer(recipient, userTotalValue);
         }
     }
 
     function unstakeTokens(address _token) public {
-        uint256 balance = stakeBalance[_token][msg.sender];
+        uint256 balance = stakingBalance[_token][msg.sender];
         require(balance > 0, "staking balance cannot be 0");
         IERC20(_token).transfer(msg.sender, balance);
-        stakingBalanace[_token][msg.sender] = 0;
-        uniqueTokenStaked[msg.sender] = uniqueTokenStaked[msg.sender] -1;
+        stakingBalance[_token][msg.sender] = 0;
+        uniqueTokensStaked[msg.sender] = uniqueTokensStaked[msg.sender] -1;
     }
     function getUserTotalValue(address _user) public view returns (uint256){
         uint256 totalValue = 0;
-        require(uniqueTokenStaked[_user] > 0, "No tokens staked");
+        require(uniqueTokensStaked[_user] > 0, "No tokens staked");
         for (
             uint256 allowedTokensIndex = 0;
-            allowedTokenIndex < allowedTokens.length;
+            allowedTokensIndex < allowedTokens.length;
             allowedTokensIndex++
         ){
-            totalValue = totalValue + getUserSingleTokenValue(_user, allowedToken[allowedToken])
+            totalValue = totalValue + getUserSingleTokenValue(_user, allowedTokens[allowedTokensIndex]);
         }
         //first you need to check if the user has tokens before looping
+        return totalValue;
     }
 
     function getUserSingleTokenValue(address _user, address _token)
     public
     view
     returns (uint256) {
-        if (uniqueTokenStaked[_user] <= 0){
+        if (uniqueTokensStaked[_user] <= 0){
             return 0;
         }
         (uint256 price, uint256 decimals) = getTokenValue(_token);
         return
             // ETH/USD ->100
             //10 * 100 = 1,000
-            (stakingBalace[token][user] * price / (10**decimals));
+            (stakingBalance[_token][_user] * price / (10**decimals));
     }
 
-    function getTokenValue(addree _token) public view returns (uint256){
+    function getTokenValue(address _token) public view returns (uint256, uint256){
         address priceFeedAddress = tokenPriceFeedMapping[_token];
         AggregatorV3Interface priceFeed = AggregatorV3Interface(priceFeedAddress);
         (,int256 price,,,)=priceFeed.latestRoundData();
@@ -83,10 +84,10 @@ contract TokenFarm is Ownable{
     function stakeTokens(uint256 _amount, address _token) public {
         require(_amount > 0, "Amount must be more than 0");
         require(tokenIsAllowed(_token), "TOoken is not allowed");
-        IERC20(-token).transferFrom(msg.sender, address(this), _amount);
-        updateUniqueTokenStaked(msg.sender, _token);
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        updateUniqueTokensStaked(msg.sender, _token);
         stakingBalance[_token][msg.sender] = stakingBalance[_token][msg.sender] + _amount;
-        if (uniqueTokenStaked[msg.sender] == 1) {
+        if (uniqueTokensStaked[msg.sender] == 1) {
             stakers.push(msg.sender);
         }
     }
@@ -105,5 +106,11 @@ contract TokenFarm is Ownable{
         }
     }
     return false;
+    }
+
+    function updateUniqueTokensStaked(address _user, address _token) internal {
+        if (stakingBalance[_token][_user] <= 0){
+            uniqueTokensStaked[_user] = uniqueTokensStaked[_user] + 1;
+        }
     }
 }
