@@ -1,16 +1,22 @@
 import React from 'react';
-import { DAppProvider, ChainId } from "@usedapp/core"
-import {Header} from "./components/Header"
+import logo from './logo.svg';
+import './App.css';
+import { Container } from "@material-ui/core"
+
+
 
 function App() {
   return (
     <DAppProvider config={{
       supportedChains: [ChainId.Kovan, ChainId.Rinkeby]
     }}>
-      <Header/>
-      <div>Hi!</div>
+      <Header>
+        <Container>
+          <div>Hi</div>
+        </Container>
+      </Header>
     </DAppProvider>
-  )
+  );
 }
 
 export default App;
