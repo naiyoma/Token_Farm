@@ -5,6 +5,7 @@ import { ChainId } from '@usedapp/core';
 import './App.css';
 import { DAppProvider } from '@usedapp/core';
 import { Container } from "@material-ui/core"
+import { Main } from "./components/Main"
 
 
 
@@ -16,6 +17,7 @@ function App() {
       <Header />
       <Container>
         <div>Hi</div>
+        <Main />
       </Container>
     </DAppProvider>
   );
