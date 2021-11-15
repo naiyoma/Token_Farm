@@ -1,30 +1,30 @@
 import { Button, makeStyles } from "@material-ui/core"
 import { useEthers } from "@usedapp/core"
 
-
-
 const useStyles = makeStyles((theme) => ({
     container: {
         padding: theme.spacing(4),
         display: "flex",
-        justifyingContent: "flex-end",
+        justifyContent: "flex-end",
         gap: theme.spacing(1)
     },
 }))
 
+
 export const Header = () => {
     const classes = useStyles()
+
     const { account, activateBrowserWallet, deactivate } = useEthers()
+
     const isConnected = account !== undefined
 
     return (
         <div className={classes.container}>
             {isConnected ? (
-                <Button variant="contained" color="primary" onClick={deactivate}>
+                <Button variant="contained" onClick={deactivate}>
                     Disconnect
                 </Button>
             ) : (
-
                 <Button
                     color="primary"
                     variant="contained"
@@ -32,7 +32,6 @@ export const Header = () => {
                 >
                     Connect
                 </Button>
-
             )}
         </div>
     )
