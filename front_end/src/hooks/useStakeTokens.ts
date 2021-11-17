@@ -7,40 +7,51 @@ import { Contract } from "@ethersproject/contracts"
 import networkMapping from "../chain-info/deployments/map.json"
 
 export const useStakeTokens = (tokenAddress: string) => {
+    // address
+    // abi
+    // chainId
     const { chainId } = useEthers()
     const { abi } = TokenFarm
-    const tokenFarmAddress = chainId ? networkMapping[
-        String(chainId)]["TokenFarm"][0] : constants.AddressZero
+    const tokenFarmAddress = chainId ? networkMapping[String(chainId)]["TokenFarm"][0] : constants.AddressZero
     const tokenFarmInterface = new utils.Interface(abi)
-    const tokenFarmContract = new Contract(tokenFarmAddress, tokenFarmInterface,)
+    const tokenFarmContract = new Contract(tokenFarmAddress, tokenFarmInterface)
 
     const erc20ABI = ERC20.abi
     const erc20Interface = new utils.Interface(erc20ABI)
     const erc20Contract = new Contract(tokenAddress, erc20Interface)
-
-    const { send: approvedErc20Send, state: approvedErc20State } =
+    // approve
+    const { send: approveErc20Send, state: approveAndStakeErc20State } =
         useContractFunction(erc20Contract, "approve", {
             transactionName: "Approve ERC20 transfer",
         })
     const approveAndStake = (amount: string) => {
         setAmountToStake(amount)
-        return approvedErc20Send(tokenFarmAddress, amount)
+        return approveErc20Send(tokenFarmAddress, amount)
     }
-
+    // stake
     const { send: stakeSend, state: stakeState } =
         useContractFunction(tokenFarmContract, "stakeTokens", {
             transactionName: "Stake Tokens",
         })
-
     const [amountToStake, setAmountToStake] = useState("0")
 
+    //useEffect
     useEffect(() => {
-        if (approvedErc20State.status === "Success") {
-            stakeSend(???, tokenAddress)
-
+        if (approveAndStakeErc20State.status === "Success") {
+            stakeSend(amountToStake, tokenAddress)
         }
+    }, [approveAndStakeErc20State, amountToStake, tokenAddress])
 
-    }, [approvedErc20State])
 
-    return { approve, approvedErc20State }
+    const [state, setState] = useState(approveAndStakeErc20State)
+
+    useEffect(() => {
+        if (approveAndStakeErc20State.status === "Success") {
+            setState(stakeState)
+        } else {
+            setState(approveAndStakeErc20State)
+        }
+    }, [approveAndStakeErc20State, stakeState])
+
+    return { approveAndStake, state }
 }
