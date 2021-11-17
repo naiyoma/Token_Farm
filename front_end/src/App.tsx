@@ -16,7 +16,7 @@ function App() {
     }}>
       <Header />
       <Container>
-        <div>Hi</div>
+        <div></div>
         <Main />
       </Container>
     </DAppProvider>
