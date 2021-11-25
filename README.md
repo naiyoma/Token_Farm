@@ -9,4 +9,4 @@
 * _GetETHValue_
 
 
-source : [Solidity, Blockchain, and Smart Contract Course ](https://youtu.be/M576WGiDBdQ)
+source : [Solidity, Blockchain, and Smart Contract Course ](https://youtu.be/M576WGiDBdQ) by Patrick Collins
